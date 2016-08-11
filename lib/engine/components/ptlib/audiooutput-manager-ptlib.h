@@ -41,7 +41,6 @@
 #include "audiooutput-manager.h"
 #include "runtime.h"
 
-#include "ptbuildopts.h"
 #include <ptlib/sound.h>
 
 /**

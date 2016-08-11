@@ -39,8 +39,6 @@
 #ifndef _ENDPOINT_H_
 #define _ENDPOINT_H_
 
-#include <opal/buildopts.h>
-#include <ptbuildopts.h>
 
 #include <ptlib.h>
 

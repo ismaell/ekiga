@@ -50,7 +50,6 @@
 #include <glib.h>
 #include <set>
 
-#include "ptbuildopts.h"
 #include "ptlib.h"
 
 #define VIDEO_INPUT_FALLBACK_DEVICE_TYPE   "Moving Logo"

@@ -35,7 +35,6 @@
  *
  */
 
-#include <ptbuildopts.h>
 #include <ptlib.h>
 #include <opal/manager.h>
 

@@ -42,7 +42,6 @@
 #include "videoinput-manager.h"
 #include "runtime.h"
 
-#include "ptbuildopts.h"
 #include <ptclib/delaychan.h>
 
 /**

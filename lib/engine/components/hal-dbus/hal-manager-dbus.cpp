@@ -48,7 +48,6 @@ extern "C" {
 #endif /* HAVE_V4L */
 
 //FIXME: for tracing
-#include "ptbuildopts.h"
 #include "ptlib.h"
 
 HalManager_dbus::HalManager_dbus (Ekiga::ServiceCore & _core)

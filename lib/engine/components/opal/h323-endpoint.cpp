@@ -245,7 +245,7 @@ Opal::H323::EndPoint::set_listen_port (unsigned port)
 void
 Opal::H323::EndPoint::set_initial_bandwidth (unsigned kind_of_net)
 {
-  unsigned bandwidth = GetInitialBandwidth ();
+  unsigned bandwidth = GetInitialBandwidth (OpalBandwidth::Tx);
 
   switch (kind_of_net) {
   case 0: // PSTN

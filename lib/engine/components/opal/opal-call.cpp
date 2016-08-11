@@ -609,10 +609,10 @@ Opal::Call::OnRTPStatistics2 (const OpalConnection & /* connection */,
 
     total_a = session.GetPacketsReceived ();
     lost_a = session.GetPacketsLost ();
-    too_late_a = session.GetPacketsTooLate ();
+    // FIXME too_late_a = session.GetPacketsTooLate ();
     out_of_order_a = session.GetPacketsOutOfOrder ();
 
-    jitter = session.GetJitterBufferSize () / max ((unsigned) session.GetJitterTimeUnits (), (unsigned) 8);
+    jitter = session.GetAvgJitterTime();
   }
   else {
 
@@ -633,7 +633,7 @@ Opal::Call::OnRTPStatistics2 (const OpalConnection & /* connection */,
 
     total_v = session.GetPacketsReceived ();
     lost_v = session.GetPacketsLost ();
-    too_late_v = session.GetPacketsTooLate ();
+    // FIXME too_late_v = session.GetPacketsTooLate ();
     out_of_order_v = session.GetPacketsOutOfOrder ();
   }
 

@@ -49,7 +49,6 @@
 
 #include <glib.h>
 
-#include "ptbuildopts.h"
 #include "ptlib.h"
 
 namespace Ekiga

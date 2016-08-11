@@ -40,7 +40,6 @@
 #ifndef _EKIGA_VIDEO_INPUT_H_
 #define _EKIGA_VIDEO_INPUT_H_
 
-#include <ptbuildopts.h>
 #include <ptlib.h>
 #include <opal/manager.h>
 

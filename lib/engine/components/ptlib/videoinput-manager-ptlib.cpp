@@ -35,7 +35,6 @@
  */
 
 #include "videoinput-manager-ptlib.h"
-#include "ptbuildopts.h"
 #include "ptlib.h"
 #include "utils.h"
 

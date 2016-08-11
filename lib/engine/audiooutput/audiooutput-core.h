@@ -45,7 +45,6 @@
 #include "audiooutput-gmconf-bridge.h"
 #include "audiooutput-scheduler.h"
 
-#include "ptbuildopts.h"
 #include "ptlib.h"
 
 #define AUDIO_OUTPUT_FALLBACK_DEVICE_TYPE "Ekiga"

@@ -37,6 +37,7 @@
 
 #include <opal/opal.h>
 #include <opal/call.h>
+#include <ep/pcss.h>
 
 #include "runtime.h"
 #include "services.h"
@@ -177,7 +178,7 @@ public:
 
     void OnClosedMediaStream (OpalMediaStream & stream);
 
-    void OnRTPStatistics (const OpalConnection & connection, const RTP_Session & session);
+    void OnRTPStatistics2 (const OpalConnection & connection, const OpalRTPSession & session);
 
     void DoSetUp (OpalConnection & connection);
 

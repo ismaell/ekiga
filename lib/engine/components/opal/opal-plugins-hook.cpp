@@ -121,6 +121,7 @@ static boost::shared_ptr<PVideoOutputDevice_EKIGA_PluginServiceDescriptor> video
 void
 hook_ekiga_plugins_to_opal (Ekiga::ServiceCore& core)
 {
+  #if 0
   audio = boost::shared_ptr<PSoundChannel_EKIGA_PluginServiceDescriptor> (new PSoundChannel_EKIGA_PluginServiceDescriptor (core));
   videoinput = boost::shared_ptr<PVideoInputDevice_EKIGA_PluginServiceDescriptor> (new PVideoInputDevice_EKIGA_PluginServiceDescriptor (core));
   videooutput = boost::shared_ptr<PVideoOutputDevice_EKIGA_PluginServiceDescriptor> (new PVideoOutputDevice_EKIGA_PluginServiceDescriptor (core));
@@ -131,4 +132,5 @@ hook_ekiga_plugins_to_opal (Ekiga::ServiceCore& core)
 						      videoinput.get ());
   PPluginManager::GetPluginManager().RegisterService ("EKIGA", "PVideoOutputDevice",
 						      videooutput.get ());
+  #endif
 }

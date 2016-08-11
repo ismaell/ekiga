@@ -159,7 +159,7 @@ Opal::Sip::EndPoint::EndPoint (Opal::CallManager & _manager,
   manager.AddRouteEntry("pc:.* = sip:<da>");
 
   /* NAT Binding */
-  SetNATBindingRefreshMethod (SIPEndPoint::Options);
+  SetNATBindingRefreshMethod (KeepAliveByOPTION);
 }
 
 
@@ -294,8 +294,7 @@ Opal::Sip::EndPoint::send_message (const std::string & _uri,
   if (!_uri.empty () && (_uri.find ("sip:") == 0 || _uri.find (':') == string::npos) && !_message.empty ()) {
     OpalIM im;
     im.m_to = PURL (_uri);
-    im.m_mimeType = "text/plain;charset=UTF-8";
-    im.m_body = _message;
+    im.m_bodies.SetAt (PMIMEInfo::TextPlain(), _message);
     Message (im);
     return true;
   }
@@ -529,19 +528,13 @@ Opal::Sip::EndPoint::Register (const std::string username,
 			       unsigned timeout)
 {
   PString _aor;
-  std::stringstream aor;
   std::string host(host_);
   std::string::size_type loc = host.find (":", 0);
   if (loc != std::string::npos)
     host = host.substr (0, loc);
 
-  if (username.find ("@") == std::string::npos)
-    aor << username << "@" << host;
-  else
-    aor << username;
-
   SIPRegister::Params params;
-  params.m_addressOfRecord = PString (aor.str ());
+  params.m_addressOfRecord = PString (username);
   params.m_registrarAddress = PString (host_);
   params.m_compatibility = compat_mode;
   params.m_authID = auth_username;
@@ -557,7 +550,7 @@ Opal::Sip::EndPoint::Register (const std::string username,
     status.m_reRegistering = false;
     status.m_userData = NULL;
     status.m_reason = SIP_PDU::Local_TransportError;
-    status.m_addressofRecord = PString (aor.str ());
+    status.m_addressofRecord = PString (username);
 
     OnRegistrationStatus (status);
   }
@@ -879,8 +872,7 @@ Opal::Sip::EndPoint::OnIncomingConnection (OpalConnection &connection,
 
 
 bool
-Opal::Sip::EndPoint::OnReceivedMESSAGE (OpalTransport & transport,
-					SIP_PDU & pdu)
+Opal::Sip::EndPoint::OnReceivedMESSAGE (SIP_PDU & pdu)
 {
   if (pdu.GetMIME().GetContentType(false) != "text/plain")
     return false; // Ignore what we do not handle.
@@ -901,7 +893,7 @@ Opal::Sip::EndPoint::OnReceivedMESSAGE (OpalTransport & transport,
 
   Ekiga::Runtime::run_in_main (boost::bind (&Opal::Sip::EndPoint::push_message_in_main, this, message_uri, display_name, _message));
 
-  return SIPEndPoint::OnReceivedMESSAGE (transport, pdu);
+  return SIPEndPoint::OnReceivedMESSAGE (pdu);
 }
 
 
@@ -924,7 +916,7 @@ Opal::Sip::EndPoint::OnMESSAGECompleted (const SIPMessage::Params & params,
   if (reason == SIP_PDU::Failure_TemporarilyUnavailable)
     reason_shown += _("user offline");
   else
-    reason_shown += SIP_PDU::GetStatusCodeDescription (reason);  // too many to translate them with _()...
+    reason_shown += SIP_PDU::GetStatusCodeDescription (reason).operator std::string ();  // too many to translate them with _()...
 
   Ekiga::Runtime::run_in_main (boost::bind (&Opal::Sip::EndPoint::push_notice_in_main, this, uri, display_name, reason_shown));
 }
@@ -941,7 +933,7 @@ Opal::Sip::EndPoint::GetRegisteredPartyName (const SIPURL & aor,
     return local_aor.c_str ();
 
   // as a last resort, use the local address
-  return GetDefaultRegisteredPartyName (transport);
+  return GetDefaultLocalURL (transport);
 }
 
 

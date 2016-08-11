@@ -150,15 +150,15 @@ bool GMVideoInputManager_ptlib::open (unsigned width, unsigned height, unsigned 
     return false;
   }
 
-  int whiteness, brightness, colour, contrast, hue;
-  input_device->GetParameters (&whiteness, &brightness, &colour, &contrast, &hue);
+  struct PVideoDevice::Attributes attr;
+  input_device->GetAttributes (attr);
   current_state.opened = true;
 
   Ekiga::VideoInputSettings settings;
-  settings.whiteness = whiteness >> 8;
-  settings.brightness = brightness >> 8;
-  settings.colour = colour >> 8;
-  settings.contrast = contrast >> 8;
+  settings.whiteness = attr.m_gamma >> 8;
+  settings.brightness = attr.m_brightness >> 8;
+  settings.colour = attr.m_saturation >> 8;
+  settings.contrast = attr.m_contrast >> 8;
   settings.modifyable = true;
 
   Ekiga::Runtime::run_in_main (boost::bind (&GMVideoInputManager_ptlib::device_opened_in_main, this, current_state.device, settings));
@@ -199,29 +199,45 @@ bool GMVideoInputManager_ptlib::get_frame_data (char *data)
 void GMVideoInputManager_ptlib::set_colour (unsigned colour)
 {
   PTRACE(4, "GMVideoInputManager_ptlib\tSetting colour to " << colour);
-  if (input_device)
-    input_device->SetColour(colour << 8);
+  if (input_device) {
+    struct PVideoDevice::Attributes attr;
+    input_device->GetAttributes (attr);
+    attr.m_saturation = colour << 8;
+    input_device->SetAttributes (attr);
+  }
 }
 
 void GMVideoInputManager_ptlib::set_brightness (unsigned brightness)
 {
   PTRACE(4, "GMVideoInputManager_ptlib\tSetting brightness to " << brightness);
-  if (input_device)
-    input_device->SetBrightness(brightness << 8);
+  if (input_device) {
+    struct PVideoDevice::Attributes attr;
+    input_device->GetAttributes (attr);
+    attr.m_brightness = brightness << 8;
+    input_device->SetAttributes (attr);
+  }
 }
 
 void GMVideoInputManager_ptlib::set_whiteness (unsigned whiteness)
 {
   PTRACE(4, "GMVideoInputManager_ptlib\tSetting whiteness to " << whiteness);
-  if (input_device)
-    input_device->SetWhiteness(whiteness << 8);
+  if (input_device) {
+    struct PVideoDevice::Attributes attr;
+    input_device->GetAttributes (attr);
+    attr.m_gamma = whiteness << 8;
+    input_device->SetAttributes (attr);
+  }
 }
 
 void GMVideoInputManager_ptlib::set_contrast (unsigned contrast)
 {
   PTRACE(4, "GMVideoInputManager_ptlib\tSetting contrast to " << contrast);
-  if (input_device)
-    input_device->SetContrast(contrast << 8);
+  if (input_device) {
+    struct PVideoDevice::Attributes attr;
+    input_device->GetAttributes (attr);
+    attr.m_contrast = contrast << 8;
+    input_device->SetAttributes (attr);
+  }
 }
 
 bool GMVideoInputManager_ptlib::has_device(const std::string & source, const std::string & device_name, unsigned capabilities, Ekiga::VideoInputDevice & device)

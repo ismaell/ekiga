@@ -49,6 +49,8 @@
 #include "call-manager.h"
 #include "form-request-simple.h"
 
+#include <opal/transcoders.h>
+
 #include <stdlib.h>
 
 // opal manages its endpoints itself, so we must be wary
@@ -197,10 +199,7 @@ void CallManager::set_echo_cancellation (bool enabled)
 
   // General settings
   ec = GetEchoCancelParams ();
-  if (enabled)
-    ec.m_mode = OpalEchoCanceler::Cancelation;
-  else
-    ec.m_mode = OpalEchoCanceler::NoCancelation;
+  ec.m_enabled = enabled;
   SetEchoCancelParams (ec);
 
   // Adjust setting for all connections of all calls
@@ -229,15 +228,18 @@ bool CallManager::get_echo_cancellation () const
 {
   OpalEchoCanceler::Params ec = GetEchoCancelParams ();
 
-  return (ec.m_mode == OpalEchoCanceler::Cancelation);
+  return ec.m_enabled;
 }
 
 
 void CallManager::set_maximum_jitter (unsigned max_val)
 {
   // Adjust general settings
-  SetAudioJitterDelay (20, PMIN (PMAX (max_val, 20), 1000));
+  unsigned val = std::min (std::max (max_val, (unsigned) 20), (unsigned) 1000);
 
+  SetAudioJitterDelay (20, val);
+
+#if 0
   // Adjust setting for all sessions of all connections of all calls
   for (PSafePtr<OpalCall> call = activeCalls;
        call != NULL;
@@ -263,6 +265,7 @@ void CallManager::set_maximum_jitter (unsigned max_val)
       }
     }
   }
+#endif
 }
 
 
@@ -318,7 +321,7 @@ bool CallManager::get_silence_detection () const
 
 void CallManager::set_reject_delay (unsigned delay)
 {
-  reject_delay = PMAX (5, delay);
+  reject_delay = std::max ((unsigned) 5, delay);
 }
 
 
@@ -418,7 +421,7 @@ void CallManager::set_codecs (Ekiga::CodecList & _codecs)
             && (rate == all_media_formats [j].GetClockRate () || name == "G722")) {
 
           // Found something
-          order += all_media_formats [j];
+          order = order + all_media_formats [j];
         }
       }
     }
@@ -430,7 +433,7 @@ void CallManager::set_codecs (Ekiga::CodecList & _codecs)
   for (int j = 0 ;
        j < all_media_formats.GetSize () ;
        j++)
-    order += all_media_formats [j];
+    order = order + all_media_formats [j];
 
 
   // Build the mask
@@ -440,7 +443,7 @@ void CallManager::set_codecs (Ekiga::CodecList & _codecs)
   for (int i = 0 ;
        i < all_media_formats.GetSize () ;
        i++)
-    mask += all_media_formats [i];
+    mask = mask + all_media_formats [i];
 
   // Blacklist IM protocols for now
   mask += "T.140";
@@ -821,7 +824,7 @@ CallManager::HandleSTUNResult ()
 
     if (result == PSTUNClient::SymmetricNat
 	|| result == PSTUNClient::BlockedNat
-	|| result == PSTUNClient::PartialBlockedNat) {
+	|| result == PSTUNClient::PartiallyBlocked) {
 
       error = true;
     } else {

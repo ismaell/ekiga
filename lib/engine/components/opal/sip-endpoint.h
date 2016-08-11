@@ -157,8 +157,7 @@ namespace Opal {
 
       void OnDialogInfoReceived (const SIPDialogNotification & info);
 
-      bool OnReceivedMESSAGE (OpalTransport & transport,
-                              SIP_PDU & pdu);
+      bool OnReceivedMESSAGE (SIP_PDU & pdu);
 
       void OnMESSAGECompleted (const SIPMessage::Params & params,
                                SIP_PDU::StatusCodes reason);

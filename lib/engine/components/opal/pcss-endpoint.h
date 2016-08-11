@@ -43,7 +43,7 @@
 #include "runtime.h"
 
 #include <opal/opal.h>
-#include <opal/pcss.h>
+#include <ep/pcss.h>
 
 namespace Opal {
   class CallManager;

@@ -183,6 +183,10 @@ main (int argc,
 #endif
 
   /* Ekiga initialisation */
+  // SetDirectories must appear before GnomeMeeting (PProcess) object creation,
+  // otherwise it searches for plugins in /usr/bin too, which increases ekiga
+  // startup time by several seconds
+  PPluginManager::GetPluginManager().SetDirectories (PString (P_DEFAULT_PLUGIN_DIR));
   // should come *after* ptrace initialisation, to track codec loading for ex.
   GnomeMeeting instance;
 

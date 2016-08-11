@@ -264,7 +264,7 @@ Opal::H323::EndPoint::set_initial_bandwidth (unsigned kind_of_net)
   }
 
   /* Initial requested bandwidth */
-  SetInitialBandwidth (bandwidth);
+  SetInitialBandwidth (OpalBandwidth::Tx, bandwidth);
 }
 
 
@@ -340,7 +340,7 @@ Opal::H323::EndPoint::Register (const Opal::Account& account)
       // Registering failed
       if (GetGatekeeper () != NULL) {
 
-        switch (gatekeeper->GetRegistrationFailReason ()) {
+        switch (GetGatekeeper()->GetRegistrationFailReason ()) {
 
         case H323Gatekeeper::DuplicateAlias :
           // Translators : The alias we are registering already exists : failure

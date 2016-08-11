@@ -60,7 +60,8 @@ PSoundChannel_EKIGA::PSoundChannel_EKIGA (const PString & /*_device*/,
   audiooutput_core (core.get<Ekiga::AudioOutputCore> ("audiooutput-core"))
 {
   opened = false;
-  Open (device, dir, numChannels, sampleRate, bitsPerSample);
+  Params params (dir, device, PString::Empty(), numChannels, sampleRate, bitsPerSample);
+  Open (params);
 }
 
 
@@ -79,24 +80,18 @@ PString PSoundChannel_EKIGA::GetDefaultDevice(Directions dir)
 }
 
 
-bool PSoundChannel_EKIGA::Open (const PString & /*_device*/,
-                              Directions _dir,
-                              unsigned _numChannels,
-                              unsigned _sampleRate,
-                              unsigned _bitsPerSample)
+bool PSoundChannel_EKIGA::Open (const Params & params)
 {
-  direction = _dir;
+  direction = params.m_direction;
 
-  if (_dir == Recorder) {
-    audioinput_core->start_stream(_numChannels, _sampleRate, _bitsPerSample);
-  }
-  else {
-    audiooutput_core->start (_numChannels, _sampleRate, _bitsPerSample);
-  }
+  if (params.m_direction == Recorder)
+    audioinput_core->start_stream (params.m_channels, params.m_sampleRate, params.m_bitsPerSample);
+  else
+    audiooutput_core->start (params.m_channels, params.m_sampleRate, params.m_bitsPerSample);
 
-  mNumChannels   = _numChannels;
-  mSampleRate    = _sampleRate;
-  mBitsPerSample = _bitsPerSample;
+  mNumChannels   = params.m_channels;
+  mSampleRate    = params.m_sampleRate;
+  mBitsPerSample = params.m_bitsPerSample;
 
   opened = true;
   return true;
